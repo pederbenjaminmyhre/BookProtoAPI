@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
 using System.Xml.Linq;
+using BookProtoAPI.Controllers.DTOs;
+using BookProtoAPI.Controllers.Models;
 
 namespace BookProtAPI.Controllers
 {
@@ -839,113 +841,5 @@ namespace BookProtAPI.Controllers
 
             return Ok(new { Success = true });
         }
-    }
-
-    public class TreeViewRequest
-    {
-        public int RowsPerViewport { get; set; }
-        public int ColumnsPerViewport { get; set; }
-        public int FirstVisibleRow { get; set; }
-        public int FirstVisibleColumn { get; set; }
-        public int RootID { get; set; }
-        public string SessionKey { get; set; } = null!; // required
-    }
-
-    public class TreeNodeResult
-    {
-        public int ID { get; set; }
-        public int ParentID { get; set; }
-        public int TreeLevel { get; set; }
-        public int SortID { get; set; }
-        public bool HasChildren { get; set; }
-        public int ChildCount { get; set; }
-        public DateTime StageDate { get; set; }
-        public bool IsExpanded { get; set; }
-        public string Name { get; set; } = string.Empty;
-    }
-
-    public class TreeSegment
-    {
-        public int SegmentID { get; set; }
-        public int ParentSegmentID { get; set; }
-        public int SegmentPosition { get; set; }
-        public int ParentID { get; set; }
-        public int TreeLevel { get; set; }
-        public DateTime StageDate { get; set; }
-        public int RecordCount { get; set; }
-        public int FirstTreeRow { get; set; }
-        public int LastTreeRow { get; set; }
-        public int FirstSortID { get; set; }
-        public int LastSortID { get; set; }
-    }
-
-    public class TreeNodeExpandRequest : TreeViewRequest
-    {
-        public ExpandedNode ExpandedNode { get; set; } = null!;
-    }
-
-    public class ExpandedNode
-    {
-        public int ParentID { get; set; }
-        public int ID { get; set; }
-        public int TreeLevel { get; set; }
-        public int ChildCount { get; set; }
-        public int SortID { get; set; }
-        public DateTime StageDate { get; set; }
-    }
-
-    public class TreeNodeCollapseRequest : TreeViewRequest
-    {
-        public CollapsedNode CollapsedNode { get; set; } = null!;
-    }
-
-    public class CollapsedNode
-    {
-        public int ParentID { get; set; }
-        public int ID { get; set; }
-        public int TreeLevel { get; set; }
-        public int ChildCount { get; set; }
-        public int SortID { get; set; }
-        public DateTime StageDate { get; set; }
-    }
-
-    public class TreeNodeRefreshRequest : TreeViewRequest
-    {
-        public RefreshedNode RefreshedNode { get; set; } = null!;
-    }
-
-    public class RefreshedNode
-    {
-        public int ParentID { get; set; }
-        public int ID { get; set; }
-        public int TreeLevel { get; set; }
-        public int ChildCount { get; set; }
-        public int SortID { get; set; }
-        public DateTime StageDate { get; set; }
-    }
-
-    public class InsertedRecord
-    {
-        public int ParentID { get; set; }
-        public bool HasChildren { get; set; }
-        public int ChildCount { get; set; }
-        public string Name { get; set; } = string.Empty;
-        public DateTime StageDate { get; set; }
-    }
-
-    public class UpdatedRecord
-    {
-        public int ID { get; set; }
-        public int ParentID { get; set; }
-        public bool HasChildren { get; set; }
-        public int ChildCount { get; set; }
-        public string Name { get; set; } = string.Empty;
-        public DateTime StageDate { get; set; }
-    }
-
-    public class DeletedRecord
-    {
-        public int ID { get; set; }
-        public DateTime StageDate { get; set; }
     }
 }
