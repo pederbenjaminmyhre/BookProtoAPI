@@ -7,10 +7,10 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
 using System.Xml.Linq;
-using BookProtoAPI.Controllers.DTOs;
-using BookProtoAPI.Controllers.Models;
+using BookProtoAPI.Controllers.TreeView.DTOs;
+using BookProtoAPI.Controllers.TreeView.Models;
 
-namespace BookProtAPI.Controllers
+namespace BookProtoAPI.Controllers.TreeView
 {
     [ApiController]
     [Route("api/[controller]")]
@@ -225,8 +225,8 @@ namespace BookProtAPI.Controllers
             // Find out if Split Is Required
             var siblings = segments.FindAll(s => s.ParentID == expandedNodeSegment.ParentID);
             var lastSibling = siblings[^1];
-            bool isLastNode = (lastSibling.SegmentID == expandedNodeSegment.SegmentID) &&
-                              (request.ExpandedNode.SortID == expandedNodeSegment.LastSortID);
+            bool isLastNode = lastSibling.SegmentID == expandedNodeSegment.SegmentID &&
+                              request.ExpandedNode.SortID == expandedNodeSegment.LastSortID;
             bool splitIsRequired = !isLastNode;
 
             // If splitIsRequired, modify the expandedNodeSegment

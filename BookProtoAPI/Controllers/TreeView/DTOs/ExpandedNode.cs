@@ -1,4 +1,4 @@
-﻿namespace BookProtoAPI.Controllers.DTOs
+﻿namespace BookProtoAPI.Controllers.TreeView.DTOs
 {
     public class ExpandedNode
     {

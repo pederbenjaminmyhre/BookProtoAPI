@@ -1,8 +1,7 @@
-﻿namespace BookProtoAPI.Controllers.DTOs
+﻿namespace BookProtoAPI.Controllers.TreeView.DTOs
 {
-    public class UpdatedRecord
+    public class InsertedRecord
     {
-        public int ID { get; set; }
         public int ParentID { get; set; }
         public bool HasChildren { get; set; }
         public int ChildCount { get; set; }

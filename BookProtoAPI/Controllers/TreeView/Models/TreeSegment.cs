@@ -1,4 +1,4 @@
-﻿namespace BookProtoAPI.Controllers.Models
+﻿namespace BookProtoAPI.Controllers.TreeView.Models
 {
     public class TreeSegment
     {
