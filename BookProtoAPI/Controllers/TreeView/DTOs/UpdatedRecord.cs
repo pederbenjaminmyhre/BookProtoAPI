@@ -7,6 +7,7 @@
         public bool HasChildren { get; set; }
         public int ChildCount { get; set; }
         public string Name { get; set; } = string.Empty;
-        public DateTime StageDate { get; set; }
+        public DateOnly StageDate { get; set; }
+        public string SessionKey { get; set; } = null!;
     }
 }

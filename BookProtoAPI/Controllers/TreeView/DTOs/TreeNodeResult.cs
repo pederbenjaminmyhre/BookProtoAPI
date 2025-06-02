@@ -8,7 +8,7 @@
         public int SortID { get; set; }
         public bool HasChildren { get; set; }
         public int ChildCount { get; set; }
-        public DateTime StageDate { get; set; }
+        public DateOnly StageDate { get; set; }
         public bool IsExpanded { get; set; }
         public string Name { get; set; } = string.Empty;
     }
