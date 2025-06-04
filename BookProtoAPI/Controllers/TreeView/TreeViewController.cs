@@ -270,65 +270,131 @@ namespace BookProtoAPI.Controllers.TreeView
         }
 
         [HttpPost("insert")]
-        public async Task<IActionResult> InsertNode([FromBody] InsertedRecord record)
+        public async Task<IActionResult> InsertNode([FromBody] NodeRecord record)
         {
-            // Validate Request
+            // Validate the incoming record
             if (record == null)
                 return BadRequest("Inserted record is required.");
 
-            // Open Database Connection
-            using var conn = await OpenDatabaseConnection();
+            // Retrieve SessionKey from header
+            if (!Request.Headers.TryGetValue("SessionKey", out var sessionKey) || string.IsNullOrWhiteSpace(sessionKey))
+                return BadRequest("SessionKey header is required.");
 
-            // Insert
-            var crudService = new CrudService();
-            var (generatedId, generatedSortId) = await crudService.Insert(conn, record);
+            // Optional: validate sessionKey here, e.g., check database or cache
+            // if (!SessionValidator.IsValid(sessionKey)) return Unauthorized("Invalid session key.");
 
-            // Return
-            return Ok(new
+            try
             {
-                Success = true,
-                ID = generatedId,
-                SortID = generatedSortId
-            });
+                // Open database connection
+                using var conn = await OpenDatabaseConnection();
+
+                // Perform the insert
+                var crudService = new CrudService();
+                var insertedNode = await crudService.Insert(conn, record);
+
+                // Return the full inserted NodeRecord
+                return Ok(insertedNode);
+            }
+            catch (SqlException sqlEx)
+            {
+                return Problem(
+                    title: "Database error",
+                    detail: sqlEx.Message,
+                    statusCode: StatusCodes.Status500InternalServerError
+                );
+            }
+            catch (Exception ex)
+            {
+                return Problem(
+                    title: "Unexpected error",
+                    detail: ex.Message,
+                    statusCode: StatusCodes.Status500InternalServerError
+                );
+            }
         }
 
         [HttpPost("update")]
-        public async Task<IActionResult> UpdateNode([FromBody] UpdatedRecord record)
+        public async Task<IActionResult> UpdateNode([FromBody] NodeRecord record)
         {
-            // Validate Request
+            // Validate request body
             if (record == null)
                 return BadRequest("Updated record is required.");
 
-            // Open Database Connection
-            using var conn = await OpenDatabaseConnection();
+            // Validate session key from header
+            if (!Request.Headers.TryGetValue("SessionKey", out var sessionKey) || string.IsNullOrWhiteSpace(sessionKey))
+                return BadRequest("SessionKey header is required.");
 
-            // Update
-            var crudService = new CrudService();
-            await crudService.Update(conn, record);
-
-            // Return
-            return Ok(new
+            try
             {
-                Success = true
-            });
+                // Open database connection
+                using var conn = await OpenDatabaseConnection();
+
+                // Perform the update and retrieve the upserted record
+                var crudService = new CrudService();
+                var updatedNode = await crudService.Update(conn, record);
+
+                // Return the updated NodeRecord directly
+                return Ok(updatedNode);
+            }
+            catch (SqlException sqlEx)
+            {
+                return Problem(
+                    title: "Database error",
+                    detail: sqlEx.Message,
+                    statusCode: StatusCodes.Status500InternalServerError
+                );
+            }
+            catch (Exception ex)
+            {
+                return Problem(
+                    title: "Unexpected error",
+                    detail: ex.Message,
+                    statusCode: StatusCodes.Status500InternalServerError
+                );
+            }
         }
 
+
         [HttpPost("delete")]
-        public async Task<IActionResult> DeleteNode([FromBody] DeletedRecord record)
+        public async Task<IActionResult> DeleteNode([FromBody] NodeRecord record)
         {
-            // Validate Request
+            // Validate request
             if (record == null)
                 return BadRequest("Deleted record is required.");
 
-            // Open Database Connection
-            using var conn = await OpenDatabaseConnection();
+            // Validate session key
+            if (!Request.Headers.TryGetValue("SessionKey", out var sessionKey) || string.IsNullOrWhiteSpace(sessionKey))
+                return BadRequest("SessionKey header is required.");
 
-            // Delete
-            var crudService = new CrudService();
-            await crudService.Delete(conn, record);
+            try
+            {
+                // Open DB connection
+                using var conn = await OpenDatabaseConnection();
 
-            // Return
-            return Ok(new { Success = true });
+                // Perform deletion
+                var crudService = new CrudService();
+                var deletedRecord = await crudService.Delete(conn, record);
+
+                // Return deleted record
+                return Ok(deletedRecord);
+            }
+            catch (SqlException sqlEx)
+            {
+                return Problem(
+                    title: "Database error during deletion",
+                    detail: sqlEx.Message,
+                    statusCode: StatusCodes.Status500InternalServerError
+                );
+            }
+            catch (Exception ex)
+            {
+                return Problem(
+                    title: "Unexpected error during deletion",
+                    detail: ex.Message,
+                    statusCode: StatusCodes.Status500InternalServerError
+                );
+            }
         }
+
     }
 }

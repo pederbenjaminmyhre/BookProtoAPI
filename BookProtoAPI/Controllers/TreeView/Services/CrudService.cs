@@ -7,64 +7,101 @@ namespace BookProtoAPI.Controllers.TreeView.Services
 {
     public class CrudService
     {
-        public async Task<(int GeneratedID, int GeneratedSortID)> Insert(SqlConnection conn, InsertedRecord record)
+        public async Task<NodeRecord> Insert(SqlConnection conn, NodeRecord record)
         {
             using var cmd = new SqlCommand("dbo.InsertTreeNode", conn)
             {
                 CommandType = CommandType.StoredProcedure
             };
 
-            cmd.Parameters.AddWithValue("@ParentID", record.ParentID);
-            cmd.Parameters.AddWithValue("@HasChildren", record.HasChildren);
-            cmd.Parameters.AddWithValue("@ChildCount", record.ChildCount);
-            cmd.Parameters.AddWithValue("@Name", record.Name);
-            cmd.Parameters.AddWithValue("@StageDate", record.StageDate);
+            cmd.Parameters.AddWithValue("@ParentID", record.parentId);
+            cmd.Parameters.AddWithValue("@HasChildren", record.hasChildren);
+            cmd.Parameters.AddWithValue("@ChildCount", record.childCount);
+            cmd.Parameters.AddWithValue("@Name", record.name);
+            cmd.Parameters.AddWithValue("@StageDate", record.stageDate);
 
-            var idParam = new SqlParameter("@GeneratedID", SqlDbType.Int)
+            using var reader = await cmd.ExecuteReaderAsync();
+
+            if (await reader.ReadAsync())
             {
-                Direction = ParameterDirection.Output
-            };
-            var sortIdParam = new SqlParameter("@GeneratedSortID", SqlDbType.Int)
+                return new NodeRecord
+                {
+                    id = reader.GetInt32(reader.GetOrdinal("ID")),
+                    parentId = reader.GetInt32(reader.GetOrdinal("ParentID")),
+                    hasChildren = reader.GetBoolean(reader.GetOrdinal("HasChildren")),
+                    childCount = reader.GetInt32(reader.GetOrdinal("ChildCount")),
+                    name = reader.GetString(reader.GetOrdinal("Name")),
+                    stageDate = DateOnly.FromDateTime(reader.GetDateTime(reader.GetOrdinal("StageDate"))),
+                    sortId = reader.GetInt32(reader.GetOrdinal("SortID"))
+                };
+            }
+            else
             {
-                Direction = ParameterDirection.Output
-            };
-
-            cmd.Parameters.Add(idParam);
-            cmd.Parameters.Add(sortIdParam);
-
-            await cmd.ExecuteNonQueryAsync();
-
-            return ((int)idParam.Value, (int)sortIdParam.Value);
+                throw new Exception("InsertTreeNode did not return a result row.");
+            }
         }
 
-        public async Task Update(SqlConnection conn, UpdatedRecord record)
+
+        public async Task<NodeRecord> Update(SqlConnection conn, NodeRecord record)
         {
             using var cmd = new SqlCommand("dbo.UpdateTreeNode", conn)
             {
                 CommandType = CommandType.StoredProcedure
             };
 
-            cmd.Parameters.AddWithValue("@ID", record.ID);
-            cmd.Parameters.AddWithValue("@NewParentID", record.ParentID);
-            cmd.Parameters.AddWithValue("@HasChildren", record.HasChildren);
-            cmd.Parameters.AddWithValue("@ChildCount", record.ChildCount);
-            cmd.Parameters.AddWithValue("@Name", record.Name);
-            cmd.Parameters.AddWithValue("@StageDate", record.StageDate);
+            cmd.Parameters.AddWithValue("@ID", record.id);
+            cmd.Parameters.AddWithValue("@NewParentID", record.parentId);
+            cmd.Parameters.AddWithValue("@HasChildren", record.hasChildren);
+            cmd.Parameters.AddWithValue("@ChildCount", record.childCount);
+            cmd.Parameters.AddWithValue("@Name", record.name);
+            cmd.Parameters.AddWithValue("@StageDate", record.stageDate);
 
-            await cmd.ExecuteNonQueryAsync();
+            using var reader = await cmd.ExecuteReaderAsync();
+
+            if (await reader.ReadAsync())
+            {
+                return new NodeRecord
+                {
+                    id = reader.GetInt32(reader.GetOrdinal("ID")),
+                    parentId = reader.GetInt32(reader.GetOrdinal("ParentID")),
+                    sortId = reader.GetInt32(reader.GetOrdinal("SortID")),
+                    hasChildren = reader.GetBoolean(reader.GetOrdinal("HasChildren")),
+                    childCount = reader.GetInt32(reader.GetOrdinal("ChildCount")),
+                    name = reader.GetString(reader.GetOrdinal("Name")),
+                    stageDate = DateOnly.FromDateTime(reader.GetDateTime(reader.GetOrdinal("StageDate")))
+                };
+            }
+
+            throw new Exception("UpdateTreeNode did not return an updated row.");
+
         }
 
-        public async Task Delete(SqlConnection conn, DeletedRecord record)
+
+        public async Task<NodeRecord> Delete(SqlConnection conn, NodeRecord record)
         {
-            using var cmd = new SqlCommand("dbo.DeleteTreeNode", conn)
+            try
             {
-                CommandType = CommandType.StoredProcedure
-            };
+                using var cmd = new SqlCommand("dbo.DeleteTreeNode", conn)
+                {
+                    CommandType = CommandType.StoredProcedure
+                };
 
-            cmd.Parameters.AddWithValue("@ID", record.ID);
-            cmd.Parameters.AddWithValue("@StageDate", record.StageDate);
+                cmd.Parameters.AddWithValue("@ID", record.id);
+                cmd.Parameters.AddWithValue("@StageDate", record.stageDate);
 
-            await cmd.ExecuteNonQueryAsync();
+                await cmd.ExecuteNonQueryAsync();
+
+                // Return the same record that was passed in
+                return record;
+            }
+            catch (SqlException sqlEx)
+            {
+                throw new Exception($"Database error during deletion: {sqlEx.Message}", sqlEx);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Unexpected error during deletion: {ex.Message}", ex);
+            }
         }
     }
 }
