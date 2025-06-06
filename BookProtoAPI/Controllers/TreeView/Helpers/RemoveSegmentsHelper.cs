@@ -106,7 +106,7 @@ namespace BookProtoAPI.Controllers.TreeView.Helpers
             for (int i = baseIndex + 1; i < segments.Count; i++)
             {
                 var seg = segments[i];
-                if (seg.TreeLevel > collapsedSegment.TreeLevel)
+                if (seg.TreeDepth > collapsedSegment.TreeDepth)
                 {
                     segmentsToDelete.Add(seg);
                     deletedRows += seg.RecordCount;

@@ -9,7 +9,7 @@
         public string SessionKey { get; set; } = null!;
         public int ParentID { get; set; }
         public int ID { get; set; }
-        public int TreeLevel { get; set; }
+        public int TreeDepth { get; set; }
         public int ChildCount { get; set; }
         public int SortID { get; set; }
         public DateOnly StageDate { get; set; }

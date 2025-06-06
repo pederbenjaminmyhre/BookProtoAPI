@@ -41,7 +41,7 @@ namespace BookProtoAPI.Controllers.TreeView.Helpers
                         ParentSegmentID = 0, // Root segments don't have a ParentSegment
                         SegmentPosition = segmentPosition++, // This assigns the value before incrementation
                         ParentID = request.RootID,
-                        TreeLevel = 1,
+                        TreeDepth = 1,
                         StageDate = DateOnly.FromDateTime(reader.GetDateTime(1)), // Convert DateTime to DateOnly
                         RecordCount = stagedCount,
                         FirstTreeRow = firstTreeRow,
@@ -76,7 +76,7 @@ namespace BookProtoAPI.Controllers.TreeView.Helpers
                         ParentSegmentID = 0,
                         SegmentPosition = segmentPosition++,
                         ParentID = request.RootID,
-                        TreeLevel = 1,
+                        TreeDepth = 1,
                         StageDate = new DateOnly(1900, 1, 1),
                         RecordCount = processedCount,
                         FirstTreeRow = firstTreeRow,

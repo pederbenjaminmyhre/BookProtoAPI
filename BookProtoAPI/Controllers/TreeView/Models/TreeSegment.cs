@@ -6,7 +6,7 @@
         public int ParentSegmentID { get; set; }
         public int SegmentPosition { get; set; }
         public int ParentID { get; set; }
-        public int TreeLevel { get; set; }
+        public int TreeDepth { get; set; }
         public DateOnly StageDate { get; set; }
         public int RecordCount { get; set; }
         public int FirstTreeRow { get; set; }

@@ -45,7 +45,7 @@ namespace BookProtoAPI.Controllers.TreeView.Services
                     ParentSegmentID = s.ParentSegmentID,
                     SegmentPosition = s.SegmentPosition,
                     ParentID = s.ParentID,
-                    TreeLevel = s.TreeLevel,
+                    TreeDepth = s.TreeDepth,
                     StageDate = s.StageDate,
                     RecordCount = s.RecordCount,
                     FirstTreeRow = s.FirstTreeRow,
@@ -86,7 +86,7 @@ namespace BookProtoAPI.Controllers.TreeView.Services
             int rowNum = 1;
             foreach (var seg in intersecting)
             {
-                queryList.Rows.Add(rowNum++, seg.StageDate, seg.ParentID, seg.FirstSortID, seg.LastSortID, seg.TreeLevel);
+                queryList.Rows.Add(rowNum++, seg.StageDate, seg.ParentID, seg.FirstSortID, seg.LastSortID, seg.TreeDepth);
             }
         }
         private static async Task<List<TreeNodeResult>> CallReportProcedure(SqlConnection conn, TreeViewRequest request, DataTable queryList)
@@ -103,15 +103,15 @@ namespace BookProtoAPI.Controllers.TreeView.Services
                 {
                     results.Add(new TreeNodeResult
                     {
-                        ID = reader.GetInt32(1),
-                        ParentID = reader.GetInt32(0),
-                        SortID = reader.GetInt32(3),
-                        TreeLevel = reader.GetInt32(2),
-                        HasChildren = reader.GetBoolean(4),
-                        ChildCount = reader.GetInt32(5),
-                        StageDate = DateOnly.FromDateTime(reader.GetDateTime(6)),
-                        IsExpanded = reader.GetBoolean(7),
-                        Name = reader.GetString(8)
+                        ID = reader.GetInt32(reader.GetOrdinal("ID")),
+                        ParentID = reader.GetInt32(reader.GetOrdinal("ParentID")),
+                        SortID = reader.GetInt32(reader.GetOrdinal("SortID")),
+                        TreeDepth = reader.GetInt32(reader.GetOrdinal("TreeDepth")),
+                        HasChildren = reader.GetBoolean(reader.GetOrdinal("HasChildren")),
+                        ChildCount = reader.GetInt32(reader.GetOrdinal("ChildCount")),
+                        StageDate = DateOnly.FromDateTime(reader.GetDateTime(reader.GetOrdinal("StageDate"))),
+                        IsExpanded = reader.GetBoolean(reader.GetOrdinal("IsExpanded")),
+                        Name = reader.GetString(reader.GetOrdinal("Name"))
                     });
                 }
             }
