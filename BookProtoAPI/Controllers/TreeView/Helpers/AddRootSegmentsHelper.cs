@@ -56,11 +56,25 @@ namespace BookProtoAPI.Controllers.TreeView.Helpers
 
             return (countNodesInserted, segmentId, segmentPosition, firstTreeRow);
         }
-        private static async Task<(int countNodesInserted, int segmentId, int segmentPosition, int firstTreeRow)> AddProcessedRootSegment(SqlConnection conn, TreeViewRequest request, List<TreeSegment> segments, int countNodesInserted, int segmentId, int segmentPosition, int firstTreeRow)
+        private static async Task<(int countNodesInserted, int segmentId, int segmentPosition, int firstTreeRow)> 
+            AddProcessedRootSegment(SqlConnection conn, TreeViewRequest request, List<TreeSegment> segments, int countNodesInserted, int segmentId, int segmentPosition, int firstTreeRow)
         {
-            using (var cmd = new SqlCommand("SELECT ISNULL(MAX(SortID), 0) FROM Reporting WHERE ParentID = @ParentID", conn))
+            string countRootNodesSql = "";
+            if(request.GlobalSearchJobId == 0)
+            {
+                countRootNodesSql = "SELECT ISNULL(MAX(SortID), 0) FROM dbo.Reporting WHERE ParentID = @ParentID";
+            }
+            else
+            {
+                countRootNodesSql = "SELECT ISNULL(MAX(SortID), 0) FROM dbo.GlobalSearchResults WHERE JobID = @JobID AND ParentID = @ParentID";
+            }
+
+            using (var cmd = new SqlCommand(countRootNodesSql, conn))
             {
                 cmd.Parameters.AddWithValue("@ParentID", request.RootID);
+                if (request.GlobalSearchJobId != 0) { 
+                    cmd.Parameters.AddWithValue("@JobID", request.GlobalSearchJobId);
+                }
                 var processedCountObj = await cmd.ExecuteScalarAsync();
                 int processedCount = 0;
                 if (processedCountObj != null && processedCountObj != DBNull.Value)

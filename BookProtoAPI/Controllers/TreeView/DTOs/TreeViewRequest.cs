@@ -6,6 +6,7 @@
         public int ColumnsPerViewport { get; set; }
         public int FirstVisibleRow { get; set; }
         public int FirstVisibleColumn { get; set; }
+        public int GlobalSearchJobId { get; set; }
         public int RootID { get; set; }
         public string SessionKey { get; set; } = null!; // required
     }

@@ -12,6 +12,7 @@
         public int TreeDepth { get; set; }
         public int ChildCount { get; set; }
         public int SortID { get; set; }
+        public int GlobalSearchJobId { get; set; }
         public DateOnly StageDate { get; set; }
     }
 }

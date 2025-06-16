@@ -116,6 +116,7 @@ namespace BookProtoAPI.Controllers.TreeView
                 ColumnsPerViewport = request.ColumnsPerViewport,
                 FirstVisibleRow = request.FirstVisibleRow,
                 FirstVisibleColumn = request.FirstVisibleColumn,
+                GlobalSearchJobId = request.GlobalSearchJobId,
                 RootID = 0,
                 SessionKey = request.SessionKey
             };
@@ -166,6 +167,7 @@ namespace BookProtoAPI.Controllers.TreeView
                 ColumnsPerViewport = request.ColumnsPerViewport,
                 FirstVisibleRow = request.FirstVisibleRow,
                 FirstVisibleColumn = request.FirstVisibleColumn,
+                GlobalSearchJobId = request.GlobalSearchJobId,
                 RootID = 0,
                 SessionKey = request.SessionKey
             };
@@ -225,6 +227,7 @@ namespace BookProtoAPI.Controllers.TreeView
                 ColumnsPerViewport = request.ColumnsPerViewport,
                 FirstVisibleRow = request.FirstVisibleRow,
                 FirstVisibleColumn = request.FirstVisibleColumn,
+                GlobalSearchJobId = request.GlobalSearchJobId,
                 RootID = 0,
                 SessionKey = request.SessionKey
             };

@@ -96,6 +96,7 @@ namespace BookProtoAPI.Controllers.TreeView.Services
             {
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.AddWithValue("@QueryList", queryList);
+                cmd.Parameters.AddWithValue("@GlobalSearchJobId", request.GlobalSearchJobId);
                 cmd.Parameters.AddWithValue("@FirstVisibleColumn", request.FirstVisibleColumn);
                 cmd.Parameters.AddWithValue("@ColumnsPerViewport", request.ColumnsPerViewport);
                 using var reader = await cmd.ExecuteReaderAsync();
